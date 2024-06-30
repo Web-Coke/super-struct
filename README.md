@@ -3,11 +3,15 @@
 [![github][github]](https://github.com/Web-Coke/super-struct)&ensp;[![crates-io][crates-io]](https://crates.io/crates/super-struct)&ensp;[![docs-rs][docs-rs]](crate)
 
 `super-struct` 旨在帮助开发者像 `Python` 的 `dict` 那样使用 `Rust` 的 `struct`
+
 The `super-struct` is designed to help developers use the `struct` of `Rust` in the same way that `dict` of `Python`
 
 目前这个库的大部分功能已经实现
+
 Most of the functionality of this library has already been implemented
+
 还有一部分功能正在积极开发中
+
 There are also some features that are under active development
 
 ---
@@ -29,11 +33,13 @@ There are also some features that are under active development
 ---
 
 如果你有更好的提议或需求欢迎提issue
+
 If you have a better proposal or need, please feel free to raise an issue
 
 # Example
 
 在Cargo.toml中添加
+
 Add in Cargo.toml
 
 ```toml
@@ -43,6 +49,7 @@ super-struct = "1.0"
 ```
 
 `struct` 里的类型都一致的情况下
+
 `struct` is the case where the types are the same
 ```rust
 use super_struct::*;
@@ -83,6 +90,7 @@ fn main() {
 ```
 
 如果 `struct` 里的类型不一致则 `Self[key]` 的语法糖不可用
+
 If the types in `struct` are inconsistent, the syntactic sugar for `Self[key]` is not available
 ```rust
 use super_struct::*;
