@@ -2,7 +2,7 @@
 
 # Docs
 
-[![github][github]](https://github.com/Web-Coke/super-struct)&ensp;[![crates-io][crates-io]](https://crates.io/crates/super-struct)&ensp;[![docs-rs][docs-rs]](crate)
+[![github][github]](https://github.com/Web-Coke/super-struct)&ensp;[![crates-io][crates-io]](https://crates.io/crates/super-struct)&ensp;[![docs-rs][docs-rs]](https://docs.rs/super-struct)
 
 `super-struct` 旨在帮助开发者像 `Python` 的 `dict` 那样使用 `Rust` 的 `struct`
 
