@@ -46,13 +46,14 @@ Add in Cargo.toml
 
 ```toml
 [dependencies]
-super-struct = "1.0"
+super-struct = "1.0.1"
 
 ```
 
 `struct` 里的类型都一致的情况下
 
 `struct` is the case where the types are the same
+
 ```rust
 use super_struct::*;
 
@@ -94,6 +95,7 @@ fn main() {
 如果 `struct` 里的类型不一致则 `Self[key]` 的语法糖不可用
 
 If the types in `struct` are inconsistent, the syntactic sugar for `Self[key]` is not available
+
 ```rust
 use super_struct::*;
 

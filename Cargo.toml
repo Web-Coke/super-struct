@@ -1,12 +1,21 @@
 [package]
 name = "super-struct"
-version = "0.1.0"
+version = "1.0.1"
 edition = "2021"
+authors = ["Web-Coke <2965330149@QQ.COM>"]
+description = "use the `struct` of `Rust` in the same way that `dict` of `Python`"
+readme = "README.md"
+keywords = ["dict", "struct", "ident"]
+categories = ["data-structures"]
+license = "Apache-2.0"
+repository = "https://github.com/Web-Coke/super-struct"
+documentation = "https://docs.rs/super-struct"
+homepage = "https://github.com/Web-Coke/super-struct"
 
 [lib]
 proc-macro = true
 
 [dependencies]
-syn = {version = "*", features = ["full"]}
-proc-macro2 = "*"
-quote = "*"
+syn = {version = "2.0.68", features = ["full"]}
+proc-macro2 = "1.0.86"
+quote = "1.0.36"
