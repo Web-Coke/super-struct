@@ -18,27 +18,21 @@ pub fn fn_keys(struct_iden: &Vec<syn::Ident>) -> proc_macro2::TokenStream {
 获取`struct`的所有字段名(keys)
 
 gets all field names(keys) for the `struct`
-# Examples
-```
+
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u16,
     b: u8,
 }
-let test = Test {
-    a: 0u16,
-    b: 0u8,
-};
-println!("{:?}", test.keys());
-```
-```
+println!("{:?}", Test::keys());
 --> ["a", "b"]
 ```
 "#;
     quote! {
         #[doc = #doc]
-        fn keys(&self) -> &'static[&'static str] {
-            &[#(stringify!(#struct_iden)),*]
+        pub fn keys() -> Vec<&'static str> {
+            vec![#(stringify!(#struct_iden)),*]
         }
     }
 }
@@ -52,7 +46,7 @@ pub fn fn_values(
 
 get all values in `struct` Return type `Vec<T>`
 
-```
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u8,
@@ -63,8 +57,6 @@ let test = Test {
     b: 2u8,
 };
 println!("{:?}", Test.values());
-```
-```
 --> [1, 2]
 ```
 
@@ -72,7 +64,7 @@ println!("{:?}", Test.values());
 
 If the field type of the `struct` is inconsistent, the return type is `Vec<&dyn Any>`
 
-```
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u16,
@@ -83,8 +75,6 @@ let test = Test {
     b: 2u8,
 };
 println!("{:?}", Test.values());
-```
-```
 --> [Any { .. }, Any { .. }]
 ```
 "#;
@@ -92,14 +82,14 @@ println!("{:?}", Test.values());
         let struct_type = &struct_type[0];
         return quote! {
             #[doc = #doc]
-            fn values(&self) -> Vec<&#struct_type> {
+            pub fn values(&self) -> Vec<&#struct_type> {
                 vec![#(&self.#struct_iden),*]
             }
         };
     }
     quote! {
         #[doc = #doc]
-        fn values(&self) -> Vec<&dyn ::core::any::Any> {
+        pub fn values(&self) -> Vec<&dyn ::core::any::Any> {
             vec![#(&self.#struct_iden),*]
         }
     }
@@ -113,8 +103,7 @@ pub fn fn_get(
 根据`struct`的字段名(key)获取值
 
 gets the value based on the field name(key) of the `struct`
-# Examples
-```
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u8,
@@ -132,7 +121,7 @@ assert_eq!(&test.b, test.get("b"));
 
 If the field type of the `struct` is inconsistent, the return type is `Any`
 
-```
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u16,
@@ -150,7 +139,7 @@ assert_eq!(Some(&test.b), test.get("b").downcast_ref::<u8>());
         let struct_type = &struct_type[0];
         return quote! {
             #[doc = #doc]
-            fn get(&self, key: &'static str) -> &#struct_type {
+            pub fn get(&self, key: &str) -> &#struct_type {
                 match key {
                     #(stringify!(#struct_iden) => &self.#struct_iden,)*
                     _ => panic!("不存在的key")
@@ -160,7 +149,7 @@ assert_eq!(Some(&test.b), test.get("b").downcast_ref::<u8>());
     }
     quote! {
         #[doc = #doc]
-        fn get(&self, key: &'static str) -> &dyn ::core::any::Any {
+        pub fn get(&self, key: &str) -> &dyn ::core::any::Any {
             match key {
                 #(stringify!(#struct_iden) => &self.#struct_iden,)*
                 _ => panic!("不存在的key")
@@ -178,7 +167,7 @@ pub fn fn_set(
 
 Assign value based on the name(key) of the `struct` field
 
-```
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u8,
@@ -198,7 +187,7 @@ assert_eq!(test.b, 5u8);
 
 If the type of the `struct` field is inconsistent, you need to write like this
 
-```
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u16,
@@ -218,7 +207,7 @@ assert_eq!(test.b, 5u8);
         let struct_type = &struct_type[0];
         return quote! {
             #[doc = #doc]
-            fn set(&mut self, key: &'static str, value: #struct_type) {
+            pub fn set(&mut self, key: &str, value: #struct_type) {
                 match key {
                     #(stringify!(#struct_iden) => {
                         self.#struct_iden = value;
@@ -230,7 +219,7 @@ assert_eq!(test.b, 5u8);
     }
     quote! {
         #[doc = #doc]
-        fn set(&mut self, key: &'static str, value: &dyn ::core::any::Any) {
+        pub fn set(&mut self, key: &str, value: &dyn ::core::any::Any) {
             match key {
                 #(stringify!(#struct_iden) => {
                     if let Some(value) = value.downcast_ref::<#struct_type>(){
@@ -247,13 +236,15 @@ pub fn fn_index(
     struct_name: &syn::Ident,
     struct_iden: &Vec<syn::Ident>,
     struct_type: &Vec<syn::Type>,
+    struct_gene: &syn::Generics,
+    struct_where: &Option<syn::WhereClause>,
 ) -> proc_macro2::TokenStream {
     let doc = r#"
 如果`struct`里的字段类型都一致则语法糖生效
 
 If the fields in `struct` are of the same type, then syntactic sugar takes effect
 
-```
+```ignore
 #[derive(Rustdict)]
 struct Test {
     a: u8,
@@ -267,11 +258,9 @@ for I in test.keys(){
     test[I] = 1u8;
 }
 println!("{:?}", test);
+--> [1, 1]
 test["b] = 2u8;
 println!("{:?}", test);
-```
-```
---> [1, 1]
 --> [1, 2]
 ```
 "#;
@@ -279,18 +268,22 @@ println!("{:?}", test);
         let struct_type = &struct_type[0];
         return quote! {
             #[doc = #doc]
-            impl core::ops::Index<&'static str> for #struct_name {
+            impl #struct_gene core::ops::Index<&str> for #struct_name #struct_gene
+            #struct_where
+            {
                 type Output = #struct_type;
 
-                fn index(&self, index: &'static str) -> &Self::Output {
+                fn index(&self, index: &str) -> &Self::Output {
                     match index {
                         #(stringify!(#struct_iden) => &self.#struct_iden,)*
                         _ => panic!("不存在的key"),
                     }
                 }
             }
-            impl core::ops::IndexMut<&'static str> for #struct_name {
-                fn index_mut(&mut self, index: &'static str) -> &mut Self::Output {
+            impl #struct_gene core::ops::IndexMut<&str> for #struct_name #struct_gene
+            #struct_where
+            {
+                fn index_mut(&mut self, index: &str) -> &mut Self::Output {
                     match index {
                         #(stringify!(#struct_iden) => &mut self.#struct_iden,)*
                         _ => panic!("不存在的key"),

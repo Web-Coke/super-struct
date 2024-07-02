@@ -1,4 +1,4 @@
-# 💟💟💟小奕💟💟💟
+> # 💟💟💟小奕💟💟💟
 
 # Docs
 
@@ -46,7 +46,7 @@ Add in Cargo.toml
 
 ```toml
 [dependencies]
-super-struct = "1.0.1"
+super-struct = "*"
 
 ```
 
@@ -75,7 +75,7 @@ fn main() {
 
     for i in test.keys() {
         test[i] = "Hello".to_string();
-        if i == &"language" {
+        if i == "language" {
             test[i] = "Rust".to_string()
         }
     }
@@ -141,6 +141,27 @@ fn main() {
     // "Hello"
 }
 ```
+
+# Changelog
+
+## 0.1.0
+
+* 初始版本
+* Initial release
+
+## 1.0.0 & 1.0.1
+
+* 更正文档错误
+* Correct document errors
+
+## 1.0.2
+
+* 添加对 `where` 子句的支持
+* Adds support for the `where` clause
+* 修改 `Self.keys(&self) -> &'static[&'static str]` 为 `Self::keys() -> Vec<&'static str>`
+* Changed `Self.keys(&self) -> &'static[&'static str]` to `Self::keys() -> Vec<&'static str>`
+* 详细请移步到 [Github](https://github.com/Web-Coke/super-struct)
+* For more details, please move to [Github](https://github.com/Web-Coke/super-struct)
 
 [github]: https://img.shields.io/badge/github-8da0cb?style=for-the-badge&labelColor=555555&logo=github
 [crates-io]: https://img.shields.io/badge/crates.io-fc8d62?style=for-the-badge&labelColor=555555&logo=rust

@@ -1,6 +1,6 @@
 [package]
 name = "super-struct"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2021"
 authors = ["Web-Coke <2965330149@QQ.COM>"]
 description = "use the `struct` of `Rust` in the same way that `dict` of `Python`"
